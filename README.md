@@ -118,6 +118,6 @@ https://your-deployment-url.com/bfhl
 Author
 Kartik Choudhary
 
-Email: skkartik006@gmail.com
+Email: kartik.choudhary2022@vitstudent.ac.in
 
 B.Tech, Vellore Institute of Technology
