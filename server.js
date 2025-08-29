@@ -4,11 +4,11 @@ const bodyParser = require("body-parser");
 const app = express();
 app.use(bodyParser.json());
 
-// Your existing /bfhl logic stays exactly the same
+// Helper function to create concat_string in alternating caps (reverse order)
 function buildConcatString(alphabets) {
   const letters = alphabets.join("").split("");
   let result = "";
-  let toggle = true;
+  let toggle = true; // start with uppercase
   for (let i = letters.length - 1; i >= 0; i--) {
     let ch = letters[i];
     if (/[a-zA-Z]/.test(ch)) {
@@ -19,6 +19,7 @@ function buildConcatString(alphabets) {
   return result;
 }
 
+// POST /bfhl - Main API logic
 app.post("/bfhl", (req, res) => {
   try {
     const input = req.body.data;
@@ -64,7 +65,15 @@ app.post("/bfhl", (req, res) => {
   }
 });
 
-// === New frontend homepage ===
+// GET /bfhl - Friendly message for direct browser visits
+app.get("/bfhl", (req, res) => {
+  res.send({
+    message: "This is the BFHL API endpoint. Send a POST request with JSON like: { data: [ ... ] }",
+    example: { data: ["a", "1", "334", "4", "R", "$"] },
+  });
+});
+
+// === Frontend homepage ===
 app.get("/", (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -74,18 +83,13 @@ app.get("/", (req, res) => {
       <title>BFHL API Tester</title>
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
         body {
           font-family: 'Roboto', sans-serif;
           background: linear-gradient(to right, #fbc2eb, #a6c1ee);
-          margin: 0;
-          padding: 0;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+          margin: 0; padding: 0;
+          display: flex; justify-content: center; align-items: center;
           min-height: 100vh;
         }
-
         .container {
           background: #ffffffdd;
           padding: 40px;
@@ -95,52 +99,22 @@ app.get("/", (req, res) => {
           max-width: 700px;
           width: 90%;
         }
-
-        h1 {
-          color: #333;
-          margin-bottom: 20px;
-        }
-
+        h1 { color: #333; margin-bottom: 20px; }
         textarea {
-          width: 90%;
-          padding: 15px;
-          border-radius: 12px;
-          border: 1px solid #ccc;
-          margin-bottom: 20px;
-          font-size: 16px;
+          width: 90%; padding: 15px; border-radius: 12px;
+          border: 1px solid #ccc; margin-bottom: 20px; font-size: 16px;
         }
-
         button {
-          padding: 12px 25px;
-          font-size: 16px;
-          border-radius: 12px;
-          border: none;
-          background: #ff6f61;
-          color: white;
-          cursor: pointer;
-          transition: 0.3s;
+          padding: 12px 25px; font-size: 16px; border-radius: 12px;
+          border: none; background: #ff6f61; color: white; cursor: pointer; transition: 0.3s;
         }
-
-        button:hover {
-          background: #ff3b2f;
-        }
-
+        button:hover { background: #ff3b2f; }
         pre {
-          text-align: left;
-          background: #f0f0f0;
-          padding: 20px;
-          border-radius: 12px;
-          overflow-x: auto;
-          white-space: pre-wrap;
-          word-wrap: break-word;
+          text-align: left; background: #f0f0f0; padding: 20px;
+          border-radius: 12px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;
           max-height: 300px;
         }
-
-        footer {
-          margin-top: 30px;
-          font-size: 14px;
-          color: #555;
-        }
+        footer { margin-top: 30px; font-size: 14px; color: #555; }
       </style>
     </head>
     <body>
@@ -152,7 +126,6 @@ app.get("/", (req, res) => {
         <h2>Response:</h2>
         <pre id="responseOutput">{}</pre>
       </div>
-
       <script>
         async function sendData() {
           const input = document.getElementById('inputArray').value.split(',').map(s => s.trim());
@@ -174,5 +147,5 @@ app.get("/", (req, res) => {
   `);
 });
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
